@@ -9,11 +9,14 @@ import ExperienceForm from "@/components/ui/experienceForm";
 import ReviewForm from "@/components/ui/reviewForm";
 import { motion, AnimatePresence } from "framer-motion";
 
-const steps = ["Información Personal", "Experiencia", "Revisión"];
+const steps = ["Información Personal", "Experiencia", "Revisión"]; //pasos para la navegacion
+const ERROR_LIMIT = 3; //errores permitidos
 
 export default function ChallengePage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorCount, setErrorCount] = useState(0); //contador de errores
+  const [isBlocked, setIsBlocked] = useState(false); //estado de bloqueo del formulario
   const methods = useForm<ApplicationForm>();
   const { toast } = useToast();
 
@@ -32,9 +35,42 @@ export default function ChallengePage() {
   }, [methods]);
 
   const nextStep = async () => {
+    if (isBlocked) {
+      toast({
+        title: "Formulario bloqueado",
+        description: "Por favor, espera unos segundos antes de intentarlo nuevamente.",
+        open: true,
+      });
+      return;
+    }
+
     const isValid = await methods.trigger();
     if (isValid) {
+      setErrorCount(0); //aqui se reinicia el contador de errores si el paso es valido
       setCurrentStep((prev) => prev + 1);
+    } else {
+      setErrorCount((prev) => prev + 1);
+      if (errorCount + 1 >= ERROR_LIMIT) {
+        setIsBlocked(true); //formulario bloqueado por exceso de errores
+        toast({
+          title: "Formulario bloqueado",
+          description:
+            "Has alcanzado el límite de intentos fallidos. Intenta nuevamente en unos segundos.",
+          open: true,
+        });
+
+        //desbloqueo deformulario después de 30 segundos
+        setTimeout(() => {
+          setIsBlocked(false);
+          setErrorCount(0); //reiniciar los errores
+        }, 30000);
+      } else {
+        toast({
+          title: "Error",
+          description: `Intentos fallidos: ${errorCount + 1}/${ERROR_LIMIT}`,
+          open: true,
+        });
+      }
     }
   };
 
@@ -68,6 +104,14 @@ export default function ChallengePage() {
         onSubmit={methods.handleSubmit(handleSubmit)}
         className="max-w-2xl mx-auto p-4 bg-gray-900 text-white rounded-lg shadow-lg"
       >
+        {/* intentos fallidos */}
+        {errorCount > 0 && !isBlocked && (
+          <p className="text-yellow-500 text-center mb-4">
+            {`Intentos fallidos: ${errorCount}/${ERROR_LIMIT}`}
+          </p>
+        )}
+
+        {/* indicador de progreso */}
         <div className="flex items-center justify-between mb-6">
           {steps.map((_, index) => (
             <div
@@ -79,9 +123,11 @@ export default function ChallengePage() {
             ></div>
           ))}
         </div>
+
         <h1 className="text-2xl font-bold text-center mb-4">
           {steps[currentStep]}
         </h1>
+
         <AnimatePresence mode="wait">
           <motion.div
             key={currentStep}
@@ -96,6 +142,7 @@ export default function ChallengePage() {
             {currentStep === 2 && <ReviewForm />}
           </motion.div>
         </AnimatePresence>
+
         <div className="flex justify-between mt-8">
           {currentStep > 0 && (
             <button
@@ -110,9 +157,14 @@ export default function ChallengePage() {
             <button
               type="button"
               onClick={nextStep}
-              className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-500"
+              disabled={isBlocked}
+              className={`px-6 py-2 rounded ${
+                isBlocked
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-500 text-white"
+              }`}
             >
-              Siguiente
+              {isBlocked ? "Bloqueado" : "Siguiente"}
             </button>
           ) : (
             <button
