@@ -34,7 +34,7 @@ export default function Home() {
               <li>Implementar estados de carga</li>
               <li>Agregar animaciones entre pasos o</li>
               <li>Hacerlo responsivo o</li>
-              <li>Agregar manejo de errores</li>
+              <li>Agregar manejo de errores o</li>
             </ul>
           </div>
                     <div className="space-y-4">
