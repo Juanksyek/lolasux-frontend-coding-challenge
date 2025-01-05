@@ -9,17 +9,18 @@ import ExperienceForm from "@/components/ui/experienceForm";
 import ReviewForm from "@/components/ui/reviewForm";
 import { motion, AnimatePresence } from "framer-motion";
 
-const steps = ["Información Personal", "Experiencia", "Revisión"]; //pasos para la navegacion
+const steps = ["Información Personal", "Experiencia", "Revisión"]; //pasos para la navegación
 const ERROR_LIMIT = 3; //errores permitidos
 
 export default function ChallengePage() {
   const [currentStep, setCurrentStep] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); //estado de carga
   const [errorCount, setErrorCount] = useState(0); //contador de errores
   const [isBlocked, setIsBlocked] = useState(false); //estado de bloqueo del formulario
   const methods = useForm<ApplicationForm>();
   const { toast } = useToast();
 
+  //restaura los datos guardados en localStorage
   useEffect(() => {
     const savedData = localStorage.getItem("formData");
     if (savedData) {
@@ -27,6 +28,7 @@ export default function ChallengePage() {
     }
   }, [methods]);
 
+  //aqui se guardan los datos automáticamente en localStorage
   useEffect(() => {
     const subscription = methods.watch((data) => {
       localStorage.setItem("formData", JSON.stringify(data));
@@ -46,7 +48,7 @@ export default function ChallengePage() {
 
     const isValid = await methods.trigger();
     if (isValid) {
-      setErrorCount(0); //aqui se reinicia el contador de errores si el paso es valido
+      setErrorCount(0); //reinicia el contador de errores si el paso es válido
       setCurrentStep((prev) => prev + 1);
     } else {
       setErrorCount((prev) => prev + 1);
@@ -54,12 +56,11 @@ export default function ChallengePage() {
         setIsBlocked(true); //formulario bloqueado por exceso de errores
         toast({
           title: "Formulario bloqueado",
-          description:
-            "Has alcanzado el límite de intentos fallidos. Intenta nuevamente en unos segundos.",
+          description: "Has alcanzado el límite de intentos fallidos. Intenta nuevamente en unos segundos.",
           open: true,
         });
 
-        //desbloqueo deformulario después de 30 segundos
+        //desbloqueo del formulario después de 30 segundos
         setTimeout(() => {
           setIsBlocked(false);
           setErrorCount(0); //reiniciar los errores
@@ -79,9 +80,12 @@ export default function ChallengePage() {
   };
 
   const handleSubmit = async (data: ApplicationForm) => {
-    setIsLoading(true);
+    console.log("Envío iniciado");
+    setIsLoading(true); // Activa el estado de carga
+    console.log("Estado de carga activado:", isLoading);
+  
     try {
-      console.log("Formulario enviado:", data);
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       toast({
         title: "Éxito",
         description: "El formulario se envió correctamente.",
@@ -94,17 +98,19 @@ export default function ChallengePage() {
         open: true,
       });
     } finally {
-      setIsLoading(false);
+      setIsLoading(false); // Desactiva el estado de carga
     }
-  };
+  };  
 
   return (
     <FormProvider {...methods}>
       <form
         onSubmit={methods.handleSubmit(handleSubmit)}
-        className="max-w-2xl mx-auto p-4 bg-gray-900 text-white rounded-lg shadow-lg"
+        className={`max-w-2xl mx-auto p-4 bg-gray-900 text-white rounded-lg shadow-lg ${
+          isLoading ? "opacity-50 pointer-events-none" : ""
+        }`} //deshabilita la interacción durante la carga
       >
-        {/* intentos fallidos */}
+        {/* mensajes de intentos fallidos */}
         {errorCount > 0 && !isBlocked && (
           <p className="text-yellow-500 text-center mb-4">
             {`Intentos fallidos: ${errorCount}/${ERROR_LIMIT}`}
@@ -124,10 +130,12 @@ export default function ChallengePage() {
           ))}
         </div>
 
+        {/* titulo del paso actual */}
         <h1 className="text-2xl font-bold text-center mb-4">
           {steps[currentStep]}
         </h1>
 
+        {/* animación entre pasos */}
         <AnimatePresence mode="wait">
           <motion.div
             key={currentStep}
@@ -143,12 +151,16 @@ export default function ChallengePage() {
           </motion.div>
         </AnimatePresence>
 
+        {/* botones de navegación */}
         <div className="flex justify-between mt-8">
           {currentStep > 0 && (
             <button
               type="button"
               onClick={prevStep}
-              className="px-6 py-2 bg-gray-700 text-white rounded hover:bg-gray-600"
+              disabled={isBlocked}
+              className={`px-6 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 ${
+                isBlocked ? "cursor-not-allowed" : ""
+              }`}
             >
               Anterior
             </button>
@@ -170,13 +182,39 @@ export default function ChallengePage() {
             <button
               type="submit"
               disabled={isLoading}
-              className={`px-6 py-2 rounded ${
+              className={`px-6 py-2 flex items-center justify-center rounded ${
                 isLoading
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-green-600 hover:bg-green-500 text-white"
               }`}
             >
-              {isLoading ? "Enviando..." : "Enviar"}
+              {isLoading ? (
+                <>
+                  <svg
+                    className="animate-spin h-5 w-5 mr-2 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v8H4z"
+                    ></path>
+                  </svg>
+                  Enviando...
+                </>
+              ) : (
+                "Enviar"
+              )}
             </button>
           )}
         </div>
