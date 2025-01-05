@@ -100,123 +100,125 @@ export default function ChallengePage() {
   };
 
   return (
-    <FormProvider {...methods}>
-      <form
-        onSubmit={methods.handleSubmit(handleSubmit)}
-        className={`max-w-2xl mx-auto p-8 bg-white text-gray-900 rounded-lg shadow-xl border border-gray-300 ${
-          isLoading ? "opacity-50 pointer-events-none" : ""
-        }`}
-      >
-        {/* mensajes de intentos fallidos */}
-        {errorCount > 0 && !isBlocked && (
-          <p className="text-yellow-600 text-center mb-4">
-            {`Intentos fallidos: ${errorCount}/${ERROR_LIMIT}`}
-          </p>
-        )}
-
-        {/* indicador de progreso */}
-        <div className="flex items-center justify-between mb-6">
-          {steps.map((_, index) => (
-            <div
-              key={index}
-              onClick={() => setCurrentStep(index)}
-              className={`cursor-pointer h-2 flex-1 rounded-full ${
-                index <= currentStep ? "bg-green-500" : "bg-gray-300"
-              } mx-1`}
-            ></div>
-          ))}
-        </div>
-
-        <h1 className="text-2xl font-extrabold text-center mb-4">
-          {steps[currentStep]}
-        </h1>
-
-        {/* animación entre pasos */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentStep}
-            initial={{ opacity: 0, x: -100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 100 }}
-            transition={{ duration: 0.3 }}
-            className="my-6"
-          >
-            {currentStep === 0 && <PersonalInfoForm />}
-            {currentStep === 1 && <ExperienceForm />}
-            {currentStep === 2 && <ReviewForm />}
-          </motion.div>
-        </AnimatePresence>
-
-        {/* botones de navegación */}
-        <div className="flex justify-between mt-8">
-          {currentStep > 0 && (
-            <button
-              type="button"
-              onClick={prevStep}
-              disabled={isBlocked}
-              className={`px-6 py-2 text-white rounded ${
-                isBlocked
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-gray-700 hover:bg-gray-600"
-              }`}
-            >
-              Anterior
-            </button>
+    <div className="grid place-items-center bg-gray-100">
+      <FormProvider {...methods}>
+        <form
+          onSubmit={methods.handleSubmit(handleSubmit)}
+          className={`max-w-2xl mx-auto p-8 bg-white text-gray-900 rounded-lg shadow-xl border border-gray-300 ${
+            isLoading ? "opacity-50 pointer-events-none" : ""
+          }`}
+        >
+          {/* mensajes de intentos fallidos */}
+          {errorCount > 0 && !isBlocked && (
+            <p className="text-yellow-600 text-center mb-4">
+              {`Intentos fallidos: ${errorCount}/${ERROR_LIMIT}`}
+            </p>
           )}
-          {currentStep < steps.length - 1 ? (
-            <button
-              type="button"
-              onClick={nextStep}
-              disabled={isBlocked}
-              className={`px-6 py-2 text-white rounded ${
-                isBlocked
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-green-500 hover:bg-green-400"
-              }`}
+
+          {/* indicador de progreso */}
+          <div className="flex items-center justify-between mb-6">
+            {steps.map((_, index) => (
+              <div
+                key={index}
+                onClick={() => setCurrentStep(index)}
+                className={`cursor-pointer h-2 flex-1 rounded-full ${
+                  index <= currentStep ? "bg-green-500" : "bg-gray-300"
+                } mx-1`}
+              ></div>
+            ))}
+          </div>
+
+          <h1 className="text-2xl font-extrabold text-center w-4/12 mb-4">
+            {steps[currentStep]}
+          </h1>
+
+          {/* animación entre pasos */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentStep}
+              initial={{ opacity: 0, x: -100 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 100 }}
+              transition={{ duration: 0.3 }}
+              className="my-6"
             >
-              {isBlocked ? "Bloqueado" : "Siguiente"}
-            </button>
-          ) : (
-            <button
-              type="submit"
-              disabled={isLoading}
-              className={`px-6 py-2 flex items-center justify-center rounded ${
-                isLoading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-blue-600 hover:bg-blue-500 text-white"
-              }`}
-            >
-              {isLoading ? (
-                <>
-                  <svg
-                    className="animate-spin h-5 w-5 mr-2 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8v8H4z"
-                    ></path>
-                  </svg>
-                  Enviando...
-                </>
-              ) : (
-                "Enviar"
-              )}
-            </button>
-          )}
-        </div>
-      </form>
-    </FormProvider>
+              {currentStep === 0 && <PersonalInfoForm />}
+              {currentStep === 1 && <ExperienceForm />}
+              {currentStep === 2 && <ReviewForm />}
+            </motion.div>
+          </AnimatePresence>
+
+          {/* botones de navegación */}
+          <div className="flex justify-between mt-8">
+            {currentStep > 0 && (
+              <button
+                type="button"
+                onClick={prevStep}
+                disabled={isBlocked}
+                className={`px-6 py-2 text-white rounded ${
+                  isBlocked
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-gray-700 hover:bg-gray-600"
+                }`}
+              >
+                Anterior
+              </button>
+            )}
+            {currentStep < steps.length - 1 ? (
+              <button
+                type="button"
+                onClick={nextStep}
+                disabled={isBlocked}
+                className={`px-6 py-2 text-white rounded ${
+                  isBlocked
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-green-500 hover:bg-green-400"
+                }`}
+              >
+                {isBlocked ? "Bloqueado" : "Siguiente"}
+              </button>
+            ) : (
+              <button
+                type="submit"
+                disabled={isLoading}
+                className={`px-6 py-2 flex items-center justify-center rounded ${
+                  isLoading
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-blue-600 hover:bg-blue-500 text-white"
+                }`}
+              >
+                {isLoading ? (
+                  <>
+                    <svg
+                      className="animate-spin h-5 w-5 mr-2 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v8H4z"
+                      ></path>
+                    </svg>
+                    Enviando...
+                  </>
+                ) : (
+                  "Enviar"
+                )}
+              </button>
+            )}
+          </div>
+        </form>
+      </FormProvider>
+    </div>
   );
 }
