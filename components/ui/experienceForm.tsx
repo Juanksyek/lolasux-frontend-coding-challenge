@@ -11,10 +11,10 @@ export default function ExperienceForm() {
   }>;
 
   return (
-    <div>
+    <div className="bg-white shadow-lg rounded-lg p-6 border border-gray-200">
       {/* Campo: Rol Actual */}
-      <div className="mb-4">
-        <label htmlFor="currentRole" className="block text-sm font-medium text-white">
+      <div className="mb-6">
+        <label htmlFor="currentRole" className="block text-sm font-medium text-gray-700">
           Rol Actual
         </label>
         <input
@@ -23,7 +23,7 @@ export default function ExperienceForm() {
           aria-required="true"
           aria-describedby="currentRoleError"
           {...register("experience.currentRole", { required: "El rol actual es obligatorio" })}
-          className="mt-1 block w-full px-3 py-2 bg-zinc-800 text-white rounded-md focus:ring-blue-500 focus:border-blue-500"
+          className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500"
         />
         {experienceErrors?.currentRole && (
           <p
@@ -37,8 +37,8 @@ export default function ExperienceForm() {
       </div>
 
       {/* Campo: Años de Experiencia */}
-      <div className="mb-4">
-        <label htmlFor="yearsOfExperience" className="block text-sm font-medium text-white">
+      <div className="mb-6">
+        <label htmlFor="yearsOfExperience" className="block text-sm font-medium text-gray-700">
           Años de Experiencia
         </label>
         <input
@@ -50,7 +50,7 @@ export default function ExperienceForm() {
             required: "Los años de experiencia son obligatorios",
             min: { value: 1, message: "Debe tener al menos 1 año de experiencia" },
           })}
-          className="mt-1 block w-full px-3 py-2 bg-zinc-800 text-white rounded-md focus:ring-blue-500 focus:border-blue-500"
+          className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500"
         />
         {experienceErrors?.yearsOfExperience && (
           <p
@@ -64,8 +64,8 @@ export default function ExperienceForm() {
       </div>
 
       {/* Campo: Habilidades */}
-      <div className="mb-4">
-        <label htmlFor="skills" className="block text-sm font-medium text-white">
+      <div className="mb-6">
+        <label htmlFor="skills" className="block text-sm font-medium text-gray-700">
           Habilidades
         </label>
         <input
@@ -75,7 +75,7 @@ export default function ExperienceForm() {
           aria-describedby="skillsError"
           placeholder="Ejemplo: React, TypeScript"
           {...register("experience.skills.0", { required: "Debe ingresar al menos una habilidad" })}
-          className="mt-1 block w-full px-3 py-2 bg-zinc-800 text-white rounded-md focus:ring-blue-500 focus:border-blue-500"
+          className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500"
         />
         {experienceErrors?.skills && (
           <p
@@ -88,9 +88,9 @@ export default function ExperienceForm() {
         )}
       </div>
 
-      {/* Campo: Compañia */}
-      <div className="mb-4">
-        <label htmlFor="company" className="block text-sm font-medium text-white">
+      {/* Campo: Compañía */}
+      <div className="mb-6">
+        <label htmlFor="company" className="block text-sm font-medium text-gray-700">
           Compañía
         </label>
         <input
@@ -99,7 +99,7 @@ export default function ExperienceForm() {
           aria-required="true"
           aria-describedby="companyError"
           {...register("experience.company", { required: "El nombre de la compañía es obligatorio" })}
-          className="mt-1 block w-full px-3 py-2 bg-zinc-800 text-white rounded-md focus:ring-blue-500 focus:border-blue-500"
+          className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500"
         />
         {experienceErrors?.company && (
           <p
